@@ -1,16 +1,22 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import Homepage from './pages/home/Homepage'
+import Signin from './pages/login/Signin'
+import Signup from './pages/signup/Signup'
+import Profile from './pages/profile/Profile'
+import Main from './pages/main/Main'
 
 function App() {
 
   return (
     <>
-      <button className="btn">Button</button>
-      <button className="btn btn-neutral">Neutral</button>
-      <button className="btn btn-primary">Primary</button>
-      <button className="btn btn-secondary">Secondary</button>
-      <button className="btn btn-accent">Accent</button>
-      <button className="btn btn-ghost">Ghost</button>
-      <button className="btn btn-link">Link</button>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path='/signin' element={<Signin />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/tasks' element={<Main />} />
+      </Routes>
     </>
   )
 }
