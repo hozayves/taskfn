@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useAuthContext } from '../../../AuthContext';
 
-function TasksList({ id, name, description, due, status, progress }) {
+function TasksList({ id, name, description, due, status, progress, handleTaskCompleteCallback, updateFilter }) {
+    const { authUser } = useAuthContext()
+    const userName = `${authUser.firstName} ${authUser.lastName}`
     const [comment, setComment] = useState("")
     const [comments, setComments] = useState(progress);
     const [loading, setLoading] = useState(false)
@@ -24,6 +27,7 @@ function TasksList({ id, name, description, due, status, progress }) {
             if (res.status !== 200) {
                 throw new Error("Failed to post comment. Please try again.");
             }
+            console.log(res)
 
             setComments(prevComments => [res.data, ...prevComments]);
             setComment("");
@@ -64,8 +68,9 @@ function TasksList({ id, name, description, due, status, progress }) {
             if (res.status !== 200) {
                 throw new Error("Something went wrong. Please try again.");
             }
-            console.log(res)
-            setCurrentStatus(newStatus); // Update local state
+            setCurrentStatus(newStatus);
+            handleTaskCompleteCallback(newStatus);
+            updateFilter(newStatus);
         } catch (error) {
             console.error(error.message);
         } finally {
@@ -120,7 +125,7 @@ function TasksList({ id, name, description, due, status, progress }) {
                     <div className="border rounded-md p-2 flex justify-between items-center">
                         <h3 className="font-semibold">Owners</h3>
                         <div className="flex gap-2">
-                            <div className="lg:tooltip" data-tip="Yves Muhoza">
+                            <div className="lg:tooltip" data-tip={`${userName}`}>
                                 <button className="btn btn-outline">YV</button>
                             </div>
                         </div>
@@ -132,7 +137,7 @@ function TasksList({ id, name, description, due, status, progress }) {
                     <div className="flex flex-col gap-2 border p-2">
                         <h3 className="font-semibold capitalize">Activity</h3>
                         {comments.length === 0 ? (
-                            <p>No comments found.</p>
+                            <p>No progress found.</p>
                         ) : (
                             comments.map((comment, index) => <CommentItem key={index} comment={comment} deleteComment={deleteComment} />)
                         )}
@@ -146,7 +151,7 @@ function TasksList({ id, name, description, due, status, progress }) {
                                     placeholder="Write a comment here"
                                     className="input input-bordered input-lg w-full max-w-xs"
                                 />
-                                <button type="submit" className="btn btn-active btn-neutral">Post Comment</button>
+                                <button type="submit" className="btn btn-active btn-neutral">Post Progress</button>
                             </form>
                         </div>
                     </div>

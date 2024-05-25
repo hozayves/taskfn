@@ -16,6 +16,8 @@ function Tasks() {
     const [projects, setProjects] = useState([])
     const [loading, setLoading] = useState(false)
     const [tasks, setTasks] = useState([])
+    const [filter, setFilter] = useState("")
+
     const handleSubmit = async () => {
         if (!inputs.name || !inputs.description || !inputs.date) {
             alert("Please Fill all fields")
@@ -66,6 +68,22 @@ function Tasks() {
         }
         fetchTaskForUser()
     }, [authUser.id])
+
+    // Filter tasks based on selected filter
+    const filteredTasks = tasks.filter(task => {
+        if (filter === "") return true;
+        if (filter === "COMPLETED") return task.status === filter || task.status === "COMPLETED";
+        return task.status === filter;
+    });
+    const updateFilter = (newFilter) => {
+        setFilter(newFilter);
+    }
+    const handleTaskCompleteCallback = (newStatus) => {
+        // Update filter if task is completed
+        if (newStatus === 'COMPLETED') {
+            setFilter('COMPLETED');
+        }
+    }
     return (
         <>
             <Navbar />
@@ -127,15 +145,26 @@ function Tasks() {
                     </div>
                     <div className="py-5 mt-10 flex flex-col gap-2">
                         <h2 className="py-5 text-xl">My Backlog</h2>
-                        {tasks.length > 0
-                            ? tasks.map(task =>
-                            (
-                                <>
-                                    <TasksList key={task.id} progress={task.progress} id={task.id} name={task.name} due={task.dueDate} description={task.description} status={task.status} />
-                                </>
+                        <ul className="p-2 flex justify-end gap-1 capitalize">
+                            <li onClick={() => setFilter("")} className={`btn ${filter === "" ? 'btn-primary' : 'btn-ghost'}`}>All Tasks</li>
+                            <li onClick={() => setFilter("COMPLETED")} className={`btn ${filter === "COMPLETED" ? 'btn-primary' : 'btn-ghost'}`}>completed</li>
+                            <li onClick={() => setFilter("IN_PROGRESS")} className={`btn ${filter === "IN_PROGRESS" ? 'btn-primary' : 'btn-ghost'}`}>In progress</li>
+                            <li onClick={() => setFilter("TODO")} className={`btn ${filter === "TODO" ? 'btn-primary' : 'btn-ghost'}`}>todo</li>
+                        </ul>
+                        {filteredTasks.length > 0
+                            ? filteredTasks.map(task =>
+                                <TasksList
+                                    key={task.id}
+                                    progress={task.progress}
+                                    id={task.id} name={task.name}
+                                    due={task.dueDate}
+                                    description={task.description}
+                                    status={task.status}
+                                    handleTaskCompleteCallback={handleTaskCompleteCallback}
+                                    updateFilter={updateFilter}
+                                />
                             )
-                            )
-                            : ""
+                            : "No tasks found"
                         }
                     </div>
                 </div>
