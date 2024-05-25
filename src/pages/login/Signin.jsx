@@ -2,28 +2,12 @@ import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import { Link } from "react-router-dom"
 import Navbar from "../../components/navbar/Navbar"
-import { useAuthContext } from "../../AuthContext"
 import useLogin from "../../../useLogin"
 
 function Signin() {
     const [inputs, setInputs] = useState({ email: '', password: '' })
     const { loading, login } = useLogin()
-    const { setAuthUser } = useAuthContext()
 
-    // const getUser = async (id) => {
-    //     try {
-    //         const res = await fetch(`http://localhost:8090/users/${id}`);
-    //         const result = await res.json();
-    //         console.log(res)
-
-    //         console.log(res, result)
-    //         localStorage.setItem("user", JSON.stringify(result));
-    //         setAuthUser(result);
-    //     } catch (error) {
-    //         console.log(error)
-    //         toast.error(error.message);
-    //     }
-    // };
 
     const handleSignIn = async (e) => {
         e.preventDefault()
